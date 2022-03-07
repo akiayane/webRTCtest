@@ -32,6 +32,7 @@ func main() {
 	}
 	defer file.Close()
 	log.SetOutput(file)
+
 	router := gin.Default()
 	router.Use(cors.Default())
 
@@ -60,6 +61,7 @@ func main() {
 		peerID := c.Param("peerId")
 
 		fmt.Println("client Connected ", userID)
+		fmt.Println(peerConnectionMap)
 
 		var session Sdp
 		if err := c.ShouldBindJSON(&session); err != nil {
@@ -104,9 +106,7 @@ func main() {
 // user is the caller of the method
 // if user connects before peer: create channel and keep listening till track is added
 // if peer connects before user: channel would have been created by peer and track can be added by getting the channel from cache
-func recieveTrack(peerConnection *webrtc.PeerConnection,
-	peerConnectionMap map[string]chan *webrtc.Track,
-	peerID string) {
+func recieveTrack(peerConnection *webrtc.PeerConnection, peerConnectionMap map[string]chan *webrtc.Track, peerID string) {
 	if _, ok := peerConnectionMap[peerID]; !ok {
 		peerConnectionMap[peerID] = make(chan *webrtc.Track, 1)
 	}
@@ -117,9 +117,7 @@ func recieveTrack(peerConnection *webrtc.PeerConnection,
 // user is the caller of the method
 // if user connects before peer: since user is first, user will create the channel and track and will pass the track to the channel
 // if peer connects before user: since peer came already, he created the channel and is listning and waiting for me to create and pass track
-func createTrack(peerConnection *webrtc.PeerConnection,
-	peerConnectionMap map[string]chan *webrtc.Track,
-	currentUserID string) {
+func createTrack(peerConnection *webrtc.PeerConnection, peerConnectionMap map[string]chan *webrtc.Track, currentUserID string) {
 
 	if _, err := peerConnection.AddTransceiver(webrtc.RTPCodecTypeVideo); err != nil {
 		log.Fatal(err)
