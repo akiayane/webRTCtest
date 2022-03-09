@@ -50,7 +50,7 @@ func main() {
 	peerConnectionConfig := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:stun.l.google.com:19302"},
+				URLs: []string{"stun:stun4.l.google.com:19302"},
 			},
 		},
 	}
